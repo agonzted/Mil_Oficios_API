@@ -9,8 +9,23 @@ exports.createUser = async (req, res) => {
         email,
         password: await User.encryptPassword(password)
     });
+    try {
     const userSaved = await newUser.save();
     res.status(201).json(userSaved);
+    }catch (error) {
+        switch (Object.keys(error.keyValue)[0]) {
+            case "user":
+                res.json({"message": "Usuario no disponible"});
+                break;
+            case "email":
+                res.json({"message": "Este correo ya esta en uso"});
+                break;
+            default:
+                res.json({"message": "Error inesperado"});
+                break;
+        }
+    }
+    
 }
 
 exports.getUsers = async (req, res) => {
