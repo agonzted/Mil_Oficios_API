@@ -33,8 +33,49 @@ exports.login = async (req, res) => {
             break;
         case "google":
             user = await User.findOne({ email });
+            if (user !== null && typeof user !== 'undefined') {
+                jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    res.json({
+                        token
+                    });
+                });
+            } else {
+                var newUser;
+                newUser = new User({
+                    'user': req.body[Object.keys(req.body)[0]],
+                    email,
+                    password: await User.encryptPassword(password)
+                });
+                try {
+                    const userSaved = await newUser.save();
+                    res.status(201).json(userSaved);
+                } catch (error) {
+                    res.json({ "message": "Error inesperado" });
+                }
+            }
             break;
         case "facebook":
+            user = await User.findOne({ email });
+            if (user !== null && typeof user !== 'undefined') {
+                jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    res.json({
+                        token
+                    });
+                });
+            } else {
+                var newUser;
+                newUser = new User({
+                    'user': req.body[Object.keys(req.body)[0]],
+                    email,
+                    password: await User.encryptPassword(password)
+                });
+                try {
+                    const userSaved = await newUser.save();
+                    res.status(201).json(userSaved);
+                } catch (error) {
+                    res.json({ "message": "Error inesperado" });
+                }
+            }
             break;
         default:
             break;
@@ -43,44 +84,29 @@ exports.login = async (req, res) => {
 }
 
 exports.signup = async (req, res) => {
-    const { user, email, password, confirmPassword, method } = req.body;
+    const { user, email, password, confirmPassword } = req.body;
     var newUser;
     if (password == confirmPassword) {
-        switch (method) {
-            case "normal":
-                newUser = new User({
-                    user,
-                    email,
-                    password: await User.encryptPassword(password)
-                });
-                try {
-                    const userSaved = await newUser.save();
-                    res.status(201).json(userSaved);
-                } catch (error) {
-                    switch (Object.keys(error.keyValue)[0]) {
-                        case "user":
-                            res.json({ "message": "Usuario no disponible" });
-                            break;
-                        case "email":
-                            res.json({ "message": "Este correo ya esta en uso" });
-                            break;
-                        default:
-                            res.json({ "message": "Error inesperado" });
-                            break;
-                    }
-                }
-                break;
-            case "google":
-                newUser = new User({
-                    user,
-                    email,
-                    password: await User.encryptPassword(password)
-                });
-                break;
-            case "facebook":
-                break;
-            default:
-                break;
+        newUser = new User({
+            user,
+            email,
+            password: await User.encryptPassword(password)
+        });
+        try {
+            const userSaved = await newUser.save();
+            res.status(201).json(userSaved);
+        } catch (error) {
+            switch (Object.keys(error.keyValue)[0]) {
+                case "user":
+                    res.json({ "message": "Usuario no disponible" });
+                    break;
+                case "email":
+                    res.json({ "message": "Este correo ya esta en uso" });
+                    break;
+                default:
+                    res.json({ "message": "Error inesperado" });
+                    break;
+            }
         }
     } else {
         res.json({ "message": "Las contraseñas no coinciden" })
