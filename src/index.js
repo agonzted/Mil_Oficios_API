@@ -1,7 +1,7 @@
 const app = require('./app');
 const { connect } = require('./database')
 
-app.set('port', process.env.PORT || 3338);
+app.set('port', process.env.PORT || 3000);
 
 async function main(){
     try{
