@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res) => {
     const { email, password, method } = req.body;
-    console.log(req.body.password);
     var user;
     switch (method) {
         case "normal":
@@ -18,8 +17,6 @@ exports.login = async (req, res) => {
                     break;
             }
             if (user !== null && typeof user !== 'undefined') {
-                console.log(user.password);
-                console.log(password);
                 if (await User.comparePassword(password, user.password)) {
                     jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
                         res.json({
