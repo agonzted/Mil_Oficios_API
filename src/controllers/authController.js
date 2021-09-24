@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res) => {
     const { email, password, method } = req.body;
+    console.log(req.body.password);
     var user;
     switch (method) {
         case "normal":
