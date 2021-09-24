@@ -102,7 +102,11 @@ exports.signup = async (req, res) => {
         });
         try {
             const userSaved = await newUser.save();
-            res.status(201).json(userSaved);
+            jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                res.json({
+                    token
+                });
+            });
         } catch (error) {
             switch (Object.keys(error.keyValue)[0]) {
                 case "user":
