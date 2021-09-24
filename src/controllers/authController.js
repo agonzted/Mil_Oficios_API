@@ -17,6 +17,7 @@ exports.login = async (req, res) => {
                     break;
             }
             if (user !== null && typeof user !== 'undefined') {
+                print(user.password);
                 if (await User.comparePassword(password, user.password)) {
                     jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
                         res.json({
@@ -48,7 +49,11 @@ exports.login = async (req, res) => {
                 });
                 try {
                     const userSaved = await newUser.save();
-                    res.status(201).json(userSaved);
+                    jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                        res.json({
+                            token
+                        });
+                    });
                 } catch (error) {
                     res.json({ "message": "Error inesperado" });
                 }
@@ -71,7 +76,11 @@ exports.login = async (req, res) => {
                 });
                 try {
                     const userSaved = await newUser.save();
-                    res.status(201).json(userSaved);
+                    jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                        res.json({
+                            token
+                        });
+                    });
                 } catch (error) {
                     res.json({ "message": "Error inesperado" });
                 }
