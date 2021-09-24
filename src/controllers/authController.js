@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
                     break;
             }
             if (user !== null && typeof user !== 'undefined') {
-                print(user.password);
+                console.log(user.password);
                 if (await User.comparePassword(password, user.password)) {
                     jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
                         res.json({
