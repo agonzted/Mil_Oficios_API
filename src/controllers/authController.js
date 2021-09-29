@@ -94,34 +94,41 @@ exports.login = async (req, res) => {
 exports.signup = async (req, res) => {
     const { user, email, password, confirmPassword } = req.body;
     var newUser;
-    if (password == confirmPassword) {
-        newUser = new User({
-            user,
-            email,
-            password: await User.encryptPassword(password)
-        });
-        try {
-            const userSaved = await newUser.save();
-            jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
-                res.json({
-                    token
-                });
-            });
-        } catch (error) {
-            switch (Object.keys(error.keyValue)[0]) {
-                case "user":
-                    res.json({ "message": "Usuario no disponible" });
-                    break;
-                case "email":
-                    res.json({ "message": "Este correo ya esta en uso" });
-                    break;
-                default:
-                    res.json({ "message": "Error inesperado" });
-                    break;
-            }
-        }
+    if (req.body.email == '') {
+        res.json({ "message": "Email invalido" });
+    } else if (req.body.password == '') {
+        res.json({ "message": "Password invalido" });
+    } else if (req.body.user == '') {
+        res.json({ "message": "Usuario invalido" });
     } else {
-        res.json({ "message": "Las contraseñas no coinciden" })
+        if (password == confirmPassword) {
+            newUser = new User({
+                user,
+                email,
+                password: await User.encryptPassword(password)
+            });
+            try {
+                const userSaved = await newUser.save();
+                jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    res.json({
+                        token
+                    });
+                });
+            } catch (error) {
+                switch (Object.keys(error.keyValue)[0]) {
+                    case "user":
+                        res.json({ "message": "Usuario no disponible" });
+                        break;
+                    case "email":
+                        res.json({ "message": "Este correo ya esta en uso" });
+                        break;
+                    default:
+                        res.json({ "message": "Error inesperado" });
+                        break;
+                }
+            }
+        } else {
+            res.json({ "message": "Las contraseñas no coinciden" })
+        }
     }
-
 }
