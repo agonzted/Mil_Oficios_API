@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Role = require('../models/role');
 const jwt = require("jsonwebtoken");
 
 exports.login = async (req, res) => {
@@ -8,17 +9,17 @@ exports.login = async (req, res) => {
         case "normal":
             switch (Object.keys(req.body)[0]) {
                 case "user":
-                    user = await User.findOne({ "user": req.body[Object.keys(req.body)[0]] });
+                    user = await User.findOne({ "user": req.body[Object.keys(req.body)[0]]}).populate("roles");
                     break;
                 case "email":
-                    user = await User.findOne({ email });
+                    user = await User.findOne({ email }).populate("roles");
                     break;
                 default:
                     break;
             }
             if (user !== null && typeof user !== 'undefined') {
                 if (await User.comparePassword(password, user.password)) {
-                    jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '180s' }, (err, token) => {
                         res.json({
                             token
                         });
@@ -34,7 +35,7 @@ exports.login = async (req, res) => {
         case "google":
             user = await User.findOne({ email });
             if (user !== null && typeof user !== 'undefined') {
-                jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '32s' }, (err, token) => {
                     res.json({
                         token
                     });
@@ -48,7 +49,7 @@ exports.login = async (req, res) => {
                 });
                 try {
                     const userSaved = await newUser.save();
-                    jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    jwt.sign({ id: userSaved._id }, process.env.SECRET, { expiresIn: '32s' }, (err, token) => {
                         res.json({
                             token
                         });
@@ -61,7 +62,7 @@ exports.login = async (req, res) => {
         case "facebook":
             user = await User.findOne({ email });
             if (user !== null && typeof user !== 'undefined') {
-                jwt.sign({ user }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                jwt.sign({ id: user._id }, process.env.SECRET, { expiresIn: '180s' }, (err, token) => {
                     res.json({
                         token
                     });
@@ -75,7 +76,7 @@ exports.login = async (req, res) => {
                 });
                 try {
                     const userSaved = await newUser.save();
-                    jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                    jwt.sign({ id: userSaved._id }, process.env.SECRET, { expiresIn: '32s' }, (err, token) => {
                         res.json({
                             token
                         });
@@ -92,7 +93,7 @@ exports.login = async (req, res) => {
 }
 
 exports.signup = async (req, res) => {
-    const { user, email, password, confirmPassword } = req.body;
+    const { user, email, password, confirmPassword, role, phone } = req.body;
     var newUser;
     if (req.body.email == '') {
         res.json({ "message": "Email invalido" });
@@ -105,11 +106,19 @@ exports.signup = async (req, res) => {
             newUser = new User({
                 user,
                 email,
+                phone,
                 password: await User.encryptPassword(password)
             });
+            if(role){
+                const foundRoles = await Role.find({name: {$in: role}})
+                newUser.roles = foundRoles.map(role => role._id)
+            }else{
+                const preRoles = await Role.findOne({name: "Consumer"})
+                newUser.roles = [preRoles._id]
+            }
             try {
                 const userSaved = await newUser.save();
-                jwt.sign({ userSaved }, 'secretkey', { expiresIn: '32s' }, (err, token) => {
+                jwt.sign({ userSaved }, process.env.SECRET, { expiresIn: '180s' }, (err, token) => {
                     res.json({
                         token
                     });

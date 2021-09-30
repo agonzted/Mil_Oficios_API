@@ -13,6 +13,14 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    phone: {
+        type: Number,
+        unique: true
+    },
+    roles:[{
+        ref: "Role",
+        type: Schema.Types.ObjectId
+    }]
 },
 {
     timestamps: true,

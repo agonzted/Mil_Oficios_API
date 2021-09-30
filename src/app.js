@@ -1,5 +1,7 @@
+const {createRoles} = require('./libs/initiateSetUp')
 const express = require('express');
 const app = express();
+createRoles();
 const morgan = require('morgan');
 const cors = require('cors');
 
@@ -8,6 +10,8 @@ app.use(cors());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 app.set('json spaces', 2);
+
+
 
 //app.use('/api/movements',require('./routes/movements'));
 app.use('/api/users',require('./routes/users'));
