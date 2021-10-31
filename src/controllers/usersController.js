@@ -1,9 +1,10 @@
 const User = require('../models/user');
+const Role = require('../models/role');
 
 
 
 exports.createUser = async (req, res) => {
-    const { user, email, password } = req.body;
+    const { user, email, password, role, phone } = req.body;
     if (req.body.email == '') {
         res.json({ "message": "Email invalido" });
     } else if (req.body.password == '') {
@@ -14,8 +15,16 @@ exports.createUser = async (req, res) => {
         const newUser = new User({
             user,
             email,
+            phone,
             password: await User.encryptPassword(password)
         });
+        if(role){
+            const foundRoles = await Role.find({name: {$in: role}})
+            newUser.roles = foundRoles.map(role => role._id)
+        }else{
+            const preRoles = await Role.findOne({name: "Consumer"})
+            newUser.roles = [preRoles._id]
+        }
         try {
             const userSaved = await newUser.save();
             res.status(201).json(userSaved);
