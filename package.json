@@ -17,11 +17,11 @@
     "express": "^4.17.1",
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.0.5",
+    "mongoose": "^6.0.12",
     "morgan": "^1.10.0",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.4.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.14"
   }
 }

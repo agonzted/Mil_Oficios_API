@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.set('json spaces', 2);
 
-
+var clients = {};
 
 //app.use('/api/movements',require('./routes/movements'));
 app.use('/api/users', require('./routes/users'));
@@ -26,10 +26,12 @@ app.get('/', (req, res) => {
   res.json({ "title": "Hello world" });
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+io.on("connection", (socket) => {
+  console.log(socket.id, "has joined");
+  socket.on("message", (msg) => {
+    console.log(msg);
+  });
 });
-
 
 exports.appSock = app;
 exports.serverSock = server;
