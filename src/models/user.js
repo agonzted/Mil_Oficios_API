@@ -17,6 +17,37 @@ const userSchema = new Schema({
         type: Number,
         unique: true
     },
+    name:{
+        type: String,
+    },
+    lastName:{
+        type: String,
+    },
+    gender:{
+        type: String,
+    },
+    birthday:{
+        type: Date,
+    },
+    IDcard:{
+        type: String,
+    },
+    proofAddress:{
+        type: String,
+    },
+    photo:{
+        type: String,
+    },
+    emergencyContact:{
+        type: String,
+    },
+    aboutU:{
+        type: String,
+    },
+    website:{
+        type: String,
+    },
+
     roles:[{
         ref: "Role",
         type: Schema.Types.ObjectId

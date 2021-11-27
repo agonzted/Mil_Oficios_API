@@ -1,5 +1,11 @@
 const Work = require('../models/work');
 
+exports.createWork = async (req, res) => {
+    const newWork = new Work(req.body);
+    const workSaved = await newWork.save();
+    res.status(201).json(userSaved);
+}
+
 exports.getWorks = async (req, res) => {
     const works = await Work.find();
     res.status(200).json(works);

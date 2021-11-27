@@ -1,8 +1,6 @@
 const User = require('../models/user');
 const Role = require('../models/role');
 
-
-
 exports.createUser = async (req, res) => {
     const { user, email, password, role, phone } = req.body;
     if (req.body.email == '') {
